@@ -2,13 +2,17 @@
 using System.Collections.Generic;
 using UnityEngine;
 using Valve.VR;
+using Valve.VR.InteractionSystem;
 
 public class Placer : MonoBehaviour
 {
+    public SystemManager sysMan;
     public GameObject trackingObj;
     public LayerMask snapMask, nonSnapMask;
-    public bool snapping;
     public Transform hand;
+    public bool snapping;
+    public SteamVR_Action_Boolean snapButton;
+    public SteamVR_Input_Sources inputSource;
     // Start is called before the first frame update
     void Start()
     {
@@ -20,15 +24,17 @@ public class Placer : MonoBehaviour
     {
         if (trackingObj)
         {
-            if (Input.GetButtonDown("Sprint"))
+            if (snapButton.GetStateDown(inputSource))
             {
                 snapping = true;
+                sysMan.ToggleGrid(true);
             }
             else
             {
-                if (Input.GetButtonUp("Sprint"))
+                if (snapButton.GetStateUp(inputSource))
                 {
                     snapping = false;
+                    sysMan.ToggleGrid(false);
                 }
             }
             RaycastHit hit;
