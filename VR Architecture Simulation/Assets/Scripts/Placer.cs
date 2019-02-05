@@ -1,13 +1,14 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using Valve.VR;
 
 public class Placer : MonoBehaviour
 {
     public GameObject trackingObj;
     public LayerMask snapMask, nonSnapMask;
     public bool snapping;
-    public Camera cam;
+    public Transform hand;
     // Start is called before the first frame update
     void Start()
     {
@@ -30,8 +31,8 @@ public class Placer : MonoBehaviour
                     snapping = false;
                 }
             }
-            Ray ray = cam.ScreenPointToRay(Input.mousePosition);
             RaycastHit hit;
+            Ray ray = new Ray(hand.position, hand.forward);
             Vector3 placePos = Vector3.zero;
             if (snapping)
             {
@@ -43,6 +44,7 @@ public class Placer : MonoBehaviour
             }
             else
             {
+                
                 if (Physics.Raycast(ray, out hit, 1000, nonSnapMask))
                 {
                     placePos = hit.point;
