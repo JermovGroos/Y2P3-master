@@ -11,8 +11,9 @@ public class Placer : MonoBehaviour
     public LayerMask snapMask, nonSnapMask;
     public Transform hand;
     public bool snapping;
-    public SteamVR_Action_Boolean snapButton;
+    public SteamVR_Action_Boolean snapButton, placeButton;
     public SteamVR_Input_Sources inputSource;
+    public SteamVR_Action_Vector2 rotateButton;
     // Start is called before the first frame update
     void Start()
     {
@@ -24,38 +25,46 @@ public class Placer : MonoBehaviour
     {
         if (trackingObj)
         {
-            if (snapButton.GetStateDown(inputSource))
+            if (placeButton.GetStateDown(inputSource))
             {
-                snapping = true;
-                sysMan.ToggleGrid(true);
+                trackingObj = null;
             }
             else
             {
-                if (snapButton.GetStateUp(inputSource))
+                if (snapButton.GetStateDown(inputSource))
                 {
-                    snapping = false;
-                    sysMan.ToggleGrid(false);
+                    snapping = true;
+                    sysMan.ToggleGrid(true);
                 }
-            }
-            RaycastHit hit;
-            Ray ray = new Ray(hand.position, hand.forward);
-            Vector3 placePos = Vector3.zero;
-            if (snapping)
-            {
-                if (Physics.Raycast(ray, out hit, 1000, snapMask))
+                else
                 {
-                    placePos = hit.transform.position;
-                    trackingObj.transform.position = placePos;
+                    if (snapButton.GetStateUp(inputSource))
+                    {
+                        snapping = false;
+                        sysMan.ToggleGrid(false);
+                    }
                 }
-            }
-            else
-            {
-                
-                if (Physics.Raycast(ray, out hit, 1000, nonSnapMask))
+                RaycastHit hit;
+                Ray ray = new Ray(hand.position, hand.forward);
+                Vector3 placePos = Vector3.zero;
+                if (snapping)
                 {
-                    placePos = hit.point;
-                    trackingObj.transform.position = placePos;
+                    if (Physics.Raycast(ray, out hit, 1000, snapMask))
+                    {
+                        placePos = hit.transform.position;
+                        trackingObj.transform.position = placePos;
+                    }
                 }
+                else
+                {
+
+                    if (Physics.Raycast(ray, out hit, 1000, nonSnapMask))
+                    {
+                        placePos = hit.point;
+                        trackingObj.transform.position = placePos;
+                    }
+                }
+                trackingObj.transform.Rotate(new Vector3(0, -rotateButton.GetAxis(inputSource).x, 0));
             }
         }
     }
