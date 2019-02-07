@@ -50,4 +50,12 @@ public class UIManager : MonoBehaviour
         }
         fadeAnimation.Play();
     }
+    public void DisableUI(GameObject toDisable)
+    {
+        toDisable.SetActive(true);
+    }
+    public void EnableUI(GameObject toEnable)
+    {
+        toEnable.SetActive(true);
+    }
 }
