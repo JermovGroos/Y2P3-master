@@ -274,6 +274,38 @@ GameObject:
     type: 3}
   m_PrefabInstance: {fileID: 1270120034}
   m_PrefabAsset: {fileID: 0}
+--- !u!114 &174171569
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 174171568}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bd6a167ceeaa79f4498de8e0a6a75755, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  sysMan: {fileID: 2073315451}
+  trackingObj: {fileID: 0}
+  snapMask:
+    serializedVersion: 2
+    m_Bits: 16
+  nonSnapMask:
+    serializedVersion: 2
+    m_Bits: 32
+  hand: {fileID: 946547721}
+  snapping: 0
+  snapButton:
+    actionPath: /actions/default/in/GrabGrip
+    needsReinit: 0
+  placeButton:
+    actionPath: /actions/default/in/GrabPinch
+    needsReinit: 0
+  inputSource: 2
+  rotateButton:
+    actionPath: /actions/default/in/TrackpadTouch
+    needsReinit: 0
 --- !u!114 &174171573
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -292,6 +324,9 @@ MonoBehaviour:
     actionPath: /actions/default/in/GrabPinch
     needsReinit: 0
   interactSource: 2
+  teleportButton:
+    actionPath: /actions/default/in/Teleport
+    needsReinit: 0
 --- !u!1 &482631221
 GameObject:
   m_ObjectHideFlags: 0
@@ -485,6 +520,7 @@ GameObject:
   - component: {fileID: 803750074}
   - component: {fileID: 803750076}
   - component: {fileID: 803750075}
+  - component: {fileID: 803750077}
   m_Layer: 5
   m_Name: MenuBackground
   m_TagString: Untagged
@@ -549,6 +585,19 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 803750073}
   m_CullTransparentMesh: 0
+--- !u!65 &803750077
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 803750073}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 1
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Size: {x: 1, y: 1, z: 1}
+  m_Center: {x: 0, y: 0, z: 0}
 --- !u!1 &856945577 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 124034, guid: 4d293c8e162f3874b982baadd71153d2,
@@ -639,38 +688,6 @@ Transform:
     type: 3}
   m_PrefabInstance: {fileID: 1270120034}
   m_PrefabAsset: {fileID: 0}
---- !u!114 &946547723
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 946547720}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: bd6a167ceeaa79f4498de8e0a6a75755, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  sysMan: {fileID: 2073315451}
-  trackingObj: {fileID: 0}
-  snapMask:
-    serializedVersion: 2
-    m_Bits: 16
-  nonSnapMask:
-    serializedVersion: 2
-    m_Bits: 32
-  hand: {fileID: 946547721}
-  snapping: 0
-  snapButton:
-    actionPath: /actions/default/in/GrabGrip
-    needsReinit: 0
-  placeButton:
-    actionPath: /actions/default/in/GrabPinch
-    needsReinit: 0
-  inputSource: 1
-  rotateButton:
-    actionPath: /actions/default/in/TrackpadTouch
-    needsReinit: 0
 --- !u!120 &946547724
 LineRenderer:
   m_ObjectHideFlags: 0
@@ -748,8 +765,8 @@ LineRenderer:
       ctime6: 0
       ctime7: 0
       atime0: 0
-      atime1: 65535
-      atime2: 0
+      atime1: 59753
+      atime2: 64571
       atime3: 0
       atime4: 0
       atime5: 0
@@ -757,7 +774,7 @@ LineRenderer:
       atime7: 0
       m_Mode: 0
       m_NumColorKeys: 2
-      m_NumAlphaKeys: 2
+      m_NumAlphaKeys: 3
     numCornerVertices: 0
     numCapVertices: 0
     alignment: 0
@@ -1069,6 +1086,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1397671966}
   - component: {fileID: 1397671967}
+  - component: {fileID: 1397671968}
   m_Layer: 5
   m_Name: Shop
   m_TagString: Untagged
@@ -1108,7 +1126,20 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0659560fcfcfe8b42be8a0c683d24752, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  placingSystem: {fileID: 946547723}
+  placingSystem: {fileID: 0}
+--- !u!65 &1397671968
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1397671965}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 1
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Size: {x: 1, y: 1, z: 1}
+  m_Center: {x: 0, y: 0, z: 0}
 --- !u!1 &1526714635
 GameObject:
   m_ObjectHideFlags: 0
@@ -1469,6 +1500,7 @@ GameObject:
   m_Component:
   - component: {fileID: 2073315452}
   - component: {fileID: 2073315451}
+  - component: {fileID: 2073315453}
   m_Layer: 0
   m_Name: SystemManager
   m_TagString: Untagged
@@ -1507,3 +1539,23 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 2
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &2073315453
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2073315450}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 952af86e69e65104fa9e2f2b81bb6ba5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  shopUI: {fileID: 803750073}
+  shopToggleButton:
+    actionPath: /actions/default/in/GrabGrip
+    needsReinit: 0
+  shopToggleSource: 1
+  fadeAnimation: {fileID: 0}
+  fadeAppear: {fileID: 0}
+  fadeRemove: {fileID: 0}
