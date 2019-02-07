@@ -46,7 +46,7 @@ public class Placer : MonoBehaviour
                 }
                 RaycastHit hit;
                 Ray ray = new Ray(hand.position, hand.forward);
-                Vector3 placePos = Vector3.zero;
+                Vector3 placePos = hand.transform.forward * 5;
                 if (snapping)
                 {
                     if (Physics.Raycast(ray, out hit, 1000, snapMask))
