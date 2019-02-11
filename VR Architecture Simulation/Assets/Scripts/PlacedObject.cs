@@ -2,9 +2,8 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Shop : MonoBehaviour
+public class PlacedObject : Interactable
 {
-    public Placer placingSystem;
     // Start is called before the first frame update
     void Start()
     {
@@ -16,8 +15,8 @@ public class Shop : MonoBehaviour
     {
         
     }
-    public void SpawnObject(GameObject objectToPlace)
+    public override void Interact()
     {
-        placingSystem.SetTrackingObject(Instantiate(objectToPlace, Vector3.zero, Quaternion.identity));
+        Placer.placer.SetTrackingObject(gameObject);
     }
 }

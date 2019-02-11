@@ -8,7 +8,8 @@ public class UIManager : MonoBehaviour
 {
     public static UIManager uiManager;
     [Header("Shop")]
-    public GameObject shopUI;
+    public GameObject menuUI;
+    public GameObject settings;
     public SteamVR_Action_Boolean shopToggleButton;
     public SteamVR_Input_Sources shopToggleSource;
     bool toggledShop;
@@ -28,12 +29,12 @@ public class UIManager : MonoBehaviour
         {
             if (toggledShop)
             {
-                shopUI.SetActive(false);
+                menuUI.SetActive(false);
                 toggledShop = false;
             }
             else
             {
-                shopUI.SetActive(true);
+                menuUI.SetActive(true);
                 toggledShop = true;
             }
         }
@@ -52,7 +53,7 @@ public class UIManager : MonoBehaviour
     }
     public void DisableUI(GameObject toDisable)
     {
-        toDisable.SetActive(true);
+        toDisable.SetActive(false);
     }
     public void EnableUI(GameObject toEnable)
     {
