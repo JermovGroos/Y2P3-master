@@ -7,8 +7,9 @@ public class Player : MonoBehaviour
 {
     public GameObject leftHand, rightHand;
     public SteamVR_Action_Boolean interactButton;
-    public SteamVR_Input_Sources interactSource;
+    public SteamVR_Input_Sources leftHandSource;
     public SteamVR_Action_Boolean teleportButton;
+    public SteamVR_Input_Sources rightHandSource;
     LineRenderer pointer;
     bool teleporting;
     // Start is called before the first frame update
@@ -25,14 +26,14 @@ public class Player : MonoBehaviour
         {
             pointer.SetPosition(0, rightHand.transform.position);
             pointer.SetPosition(1, hitPoint.point);
-            if (interactButton.GetStateDown(interactSource))
+            if (interactButton.GetStateDown(rightHandSource))
             {
                 if (hitPoint.transform.tag == "Interactable")
                 {
                     hitPoint.transform.GetComponent<Interactable>().Interact();
                 }
             }
-            if (teleportButton.GetStateUp(interactSource))
+            if (teleportButton.GetStateUp(leftHandSource))
             {
                 if(hitPoint.transform.tag == "Ground")
                 {
