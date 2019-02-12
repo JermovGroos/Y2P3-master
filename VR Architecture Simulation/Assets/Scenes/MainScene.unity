@@ -141,7 +141,7 @@ MonoBehaviour:
   snappingPosition: 0
   snappingRotation: 0
   positionSnapButton:
-    actionPath: /actions/default/in/GrabGrip
+    actionPath: 
     needsReinit: 0
   placeButton:
     actionPath: /actions/default/in/GrabPinch
@@ -151,14 +151,14 @@ MonoBehaviour:
     actionPath: /actions/default/in/TrackpadTouch
     needsReinit: 0
   rotatePress:
-    actionPath: /actions/default/in/Teleport
+    actionPath: 
     needsReinit: 0
   rotationSnapButton:
-    actionPath: /actions/default/in/GrabGrip
+    actionPath: 
     needsReinit: 0
-  rotateTurnAmount: 15
-  divisionAmount: 1
-  tile: {fileID: 5110290901341307023, guid: 2cd038a7b44171544b0e58bb69cbb723, type: 3}
+  rotateTurnAmount: 0
+  divisionAmount: 0
+  tile: {fileID: 0}
   tileSize: {x: 0, y: 0}
   gridTileSize: {x: 0, y: 0}
   allTiles: []
@@ -560,17 +560,17 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   placingSystem: {fileID: 0}
   changeTabTrackpad:
-    actionPath: /actions/default/in/TrackpadTouch
+    actionPath: 
     needsReinit: 0
   changeTabButton:
-    actionPath: /actions/default/in/Teleport
+    actionPath: 
     needsReinit: 0
-  changeTabSource: 2
+  changeTabSource: 0
   selectedHorIndex: 0
+  selectionTabs: []
   sectionHolder: {fileID: 221801220}
-  swapDelay: 2
-  swapSmoothing: 0.1
-  moveAmount: -229
+  tickDelay: 0.001
+  ticks: 100
 --- !u!1 &482631221
 GameObject:
   m_ObjectHideFlags: 0
@@ -2302,7 +2302,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 952af86e69e65104fa9e2f2b81bb6ba5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  menuUI: {fileID: 803750073}
+  menuUI: {fileID: 0}
   settings: {fileID: 0}
   shopToggleButton:
     actionPath: /actions/default/in/GrabGrip
