@@ -14,5 +14,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   itemName: SteeringWheel
   itemIcon: {fileID: 0}
-  itemObject: {fileID: 0}
+  itemObject: {fileID: 4467715163368285224, guid: e11826a4a176a1b469212688005041c3,
+    type: 3}
   itemDiscription: 

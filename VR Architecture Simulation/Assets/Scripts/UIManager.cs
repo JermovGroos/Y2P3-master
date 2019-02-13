@@ -8,7 +8,7 @@ public class UIManager : MonoBehaviour
 {
     public static UIManager uiManager;
     [Header("Shop")]
-    public GameObject menuUI;
+    public GameObject shop;
     public GameObject settings;
     public SteamVR_Action_Boolean shopToggleButton;
     public SteamVR_Input_Sources shopToggleSource;
@@ -27,16 +27,7 @@ public class UIManager : MonoBehaviour
     {
         if (shopToggleButton.GetStateDown(shopToggleSource))
         {
-            if (toggledShop)
-            {
-                menuUI.SetActive(false);
-                toggledShop = false;
-            }
-            else
-            {
-                menuUI.SetActive(true);
-                toggledShop = true;
-            }
+            ToggleShop();
         }
     }
     public void ScreenFade(bool appear)
@@ -50,6 +41,19 @@ public class UIManager : MonoBehaviour
             fadeAnimation.clip = fadeRemove;
         }
         fadeAnimation.Play();
+    }
+    public void ToggleShop()
+    {
+        if (toggledShop)
+        {
+            shop.SetActive(false);
+            toggledShop = false;
+        }
+        else
+        {
+            shop.SetActive(true);
+            toggledShop = true;
+        }
     }
     public void DisableUI(GameObject toDisable)
     {

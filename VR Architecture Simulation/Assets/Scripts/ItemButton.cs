@@ -13,6 +13,7 @@ public class ItemButton : MonoBehaviour
     }
     public void Select()
     {
-        print("SELECTED" + itemData.itemName);
+        Placer.placer.SetTrackingObject(Instantiate(itemData.itemObject));
+        UIManager.uiManager.ToggleShop();
     }
 }

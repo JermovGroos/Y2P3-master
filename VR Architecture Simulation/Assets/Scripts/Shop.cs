@@ -9,6 +9,7 @@ public class Shop : MonoBehaviour
     public Placer placingSystem;
     public SteamVR_Action_Vector2 changeTabTrackpad;
     public SteamVR_Action_Boolean changeTabButton;
+    public SteamVR_Action_Boolean selectButton;
     public SteamVR_Input_Sources changeTabSource;
     public int selectedHorIndex;
     public int selectedVerIndex;
@@ -35,23 +36,37 @@ public class Shop : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (Input.GetKeyDown(KeyCode.RightArrow))
+        if (changeTabButton.GetStateDown(changeTabSource))
         {
-            StartCoroutine(ChangeHorIndex(1));
+            int x = Mathf.RoundToInt(changeTabTrackpad.axis.x);
+            if (x != 0)
+            {
+                if(x == 1)
+                {
+                    StartCoroutine(ChangeHorIndex(1));
+                }
+                else
+                {
+                    StartCoroutine(ChangeHorIndex(-1));
+                }
+            }
+            else
+            {
+                int y = Mathf.RoundToInt(changeTabTrackpad.axis.y);
+                if (y != 0)
+                {
+                    if(y == 1)
+                    {
+                        StartCoroutine(ChangeVerIndex(-1));
+                    }
+                    else
+                    {
+                        StartCoroutine(ChangeVerIndex(1));
+                    }
+                }
+            }
         }
-        if (Input.GetKeyDown(KeyCode.LeftArrow))
-        {
-            StartCoroutine(ChangeHorIndex(-1));
-        }
-        if (Input.GetKeyDown(KeyCode.UpArrow))
-        {
-            StartCoroutine(ChangeVerIndex(-1));
-        }
-        if (Input.GetKeyDown(KeyCode.DownArrow))
-        {
-            StartCoroutine(ChangeVerIndex(1));
-        }
-        if (Input.GetKeyDown(KeyCode.Space))
+        if (selectButton.GetStateDown(changeTabSource))
         {
             shopButtons[selectedVerIndex].GetComponent<ItemButton>().Select();
         }
@@ -116,7 +131,6 @@ public class Shop : MonoBehaviour
         if(selectedVerIndex >= shopButtons.Count)
         {
             float newVal = CalcVerDistance();
-            newVal = -200;
             newVal *= selectedVerIndex - (shopButtons.Count - 1);
             itemHolder.localPosition += new Vector3(0, newVal);
             selectedVerIndex = shopButtons.Count - 1;
@@ -125,11 +139,7 @@ public class Shop : MonoBehaviour
     }
     float CalcVerDistance()
     {
-        GameObject firstButton = Instantiate(shopItem, itemHolder);
-        GameObject secondButton = Instantiate(shopItem, itemHolder);
-        verTileDistance = secondButton.transform.position.y - firstButton.transform.position.y;
-        Destroy(firstButton);
-        Destroy(secondButton);
+        verTileDistance = -(shopItem.GetComponent<RectTransform>().rect.height + itemHolder.GetComponent<VerticalLayoutGroup>().spacing);
         return (verTileDistance);
     }
     void UpdateShopItems()

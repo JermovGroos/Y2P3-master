@@ -140,7 +140,7 @@ public class Placer : MonoBehaviour
     }
     void CalculateTilePositions(GameObject[] groundTiles)
     {
-        UIManager.uiManager.settings.GetComponent<Options>().UpdateGridDivision(divisionAmount);
+        //UIManager.uiManager.settings.GetComponent<Options>().UpdateGridDivision(divisionAmount);
         DeleteCurrentTiles();
         foreach (GameObject groundTile in groundTiles)
         {
