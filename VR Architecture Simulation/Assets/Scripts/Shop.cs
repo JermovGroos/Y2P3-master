@@ -11,10 +11,14 @@ public class Shop : MonoBehaviour
     public SteamVR_Action_Boolean changeTabButton;
     public SteamVR_Input_Sources changeTabSource;
     public int selectedHorIndex;
+    public int selectedVerIndex;
     public GameObject[] selectionTabs;
+    public List<GameObject> shopButtons = new List<GameObject>();
     public Transform sectionHolder;
+    public Transform itemHolder;
     public float tickDelay;
     public int ticks;
+    public GameObject shopItem;
     // Start is called before the first frame update
     void Start()
     {
@@ -24,6 +28,7 @@ public class Shop : MonoBehaviour
             listedSelecTabs.Add(child.gameObject);
         }
         selectionTabs = listedSelecTabs.ToArray();
+        UpdateShopItems();
     }
 
     // Update is called once per frame
@@ -36,6 +41,18 @@ public class Shop : MonoBehaviour
         if (Input.GetKeyDown(KeyCode.LeftArrow))
         {
             StartCoroutine(ChangeHorIndex(-1));
+        }
+        if (Input.GetKeyDown(KeyCode.UpArrow))
+        {
+            StartCoroutine(ChangeVerIndex(1));
+        }
+        if (Input.GetKeyDown(KeyCode.DownArrow))
+        {
+            StartCoroutine(ChangeVerIndex(-1));
+        }
+        if (Input.GetKeyDown(KeyCode.Space))
+        {
+            shopButtons[selectedVerIndex].GetComponent<ItemButton>().Select();
         }
     }
     public void SpawnObject(GameObject objectToPlace)
@@ -62,8 +79,52 @@ public class Shop : MonoBehaviour
 
         for(int i = 0; i < ticks; i++)
         {
-            sectionHolder.transform.Translate(new Vector2(moveAmount, 0));
+            sectionHolder.Translate(new Vector2(moveAmount, 0));
             yield return new WaitForSeconds(tickDelay);
+        }
+        UpdateShopItems();
+    }
+
+    public IEnumerator ChangeVerIndex(int changeAmount)
+    {
+        int previousVerIndex = selectedVerIndex;
+        selectedVerIndex += changeAmount;
+        if (selectedVerIndex < 0)
+        {
+            selectedVerIndex = shopButtons.Count - 1;
+        }
+        else
+        {
+            if (selectedVerIndex == shopButtons.Count)
+            {
+                selectedVerIndex = 0;
+            }
+        }
+        float moveAmount = shopButtons[previousVerIndex].transform.position.y - shopButtons[selectedVerIndex].transform.position.y;
+        moveAmount /= ticks;
+
+        for (int i = 0; i < ticks; i++)
+        {
+            itemHolder.Translate(new Vector2(0, moveAmount));
+            yield return new WaitForSeconds(tickDelay);
+        }
+    }
+    void Print()
+    {
+        print("HI");
+    }
+    void UpdateShopItems()
+    {
+        foreach(GameObject button in shopButtons)
+        {
+            Destroy(button);
+        }
+        shopButtons = new List<GameObject>();
+        foreach(Item item in selectionTabs[selectedHorIndex].GetComponent<ShopTabData>().tabItems)
+        {
+            GameObject newItem = Instantiate(shopItem, itemHolder);
+            shopButtons.Add(newItem);
+            newItem.GetComponent<ItemButton>().itemData = item;
         }
     }
 }
