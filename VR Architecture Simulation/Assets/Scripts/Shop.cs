@@ -12,6 +12,7 @@ public class Shop : MonoBehaviour
     public SteamVR_Input_Sources changeTabSource;
     public int selectedHorIndex;
     public int selectedVerIndex;
+    float verTileDistance;
     public GameObject[] selectionTabs;
     public List<GameObject> shopButtons = new List<GameObject>();
     public Transform sectionHolder;
@@ -44,11 +45,11 @@ public class Shop : MonoBehaviour
         }
         if (Input.GetKeyDown(KeyCode.UpArrow))
         {
-            StartCoroutine(ChangeVerIndex(1));
+            StartCoroutine(ChangeVerIndex(-1));
         }
         if (Input.GetKeyDown(KeyCode.DownArrow))
         {
-            StartCoroutine(ChangeVerIndex(-1));
+            StartCoroutine(ChangeVerIndex(1));
         }
         if (Input.GetKeyDown(KeyCode.Space))
         {
@@ -69,7 +70,7 @@ public class Shop : MonoBehaviour
         }
         else
         {
-            if(selectedHorIndex == selectionTabs.Length)
+            if(selectedHorIndex >= selectionTabs.Length)
             {
                 selectedHorIndex = 0;
             }
@@ -83,6 +84,7 @@ public class Shop : MonoBehaviour
             yield return new WaitForSeconds(tickDelay);
         }
         UpdateShopItems();
+        FixVerIndex();
     }
 
     public IEnumerator ChangeVerIndex(int changeAmount)
@@ -95,7 +97,7 @@ public class Shop : MonoBehaviour
         }
         else
         {
-            if (selectedVerIndex == shopButtons.Count)
+            if (selectedVerIndex >= shopButtons.Count)
             {
                 selectedVerIndex = 0;
             }
@@ -109,9 +111,26 @@ public class Shop : MonoBehaviour
             yield return new WaitForSeconds(tickDelay);
         }
     }
-    void Print()
+    void FixVerIndex()
     {
-        print("HI");
+        if(selectedVerIndex >= shopButtons.Count)
+        {
+            float newVal = CalcVerDistance();
+            newVal = -200;
+            newVal *= selectedVerIndex - (shopButtons.Count - 1);
+            itemHolder.localPosition += new Vector3(0, newVal);
+            selectedVerIndex = shopButtons.Count - 1;
+            print(newVal);
+        }
+    }
+    float CalcVerDistance()
+    {
+        GameObject firstButton = Instantiate(shopItem, itemHolder);
+        GameObject secondButton = Instantiate(shopItem, itemHolder);
+        verTileDistance = secondButton.transform.position.y - firstButton.transform.position.y;
+        Destroy(firstButton);
+        Destroy(secondButton);
+        return (verTileDistance);
     }
     void UpdateShopItems()
     {

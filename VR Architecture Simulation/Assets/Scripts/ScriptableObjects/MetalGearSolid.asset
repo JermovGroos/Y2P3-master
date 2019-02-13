@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4cf57e164773f684b892323d948ae92c, type: 3}
   m_Name: MetalGearSolid
   m_EditorClassIdentifier: 
-  itemName: 
+  itemName: MetalGearSolid
   itemIcon: {fileID: 0}
   itemObject: {fileID: 0}
   itemDiscription: 
