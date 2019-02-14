@@ -1,5 +1,6 @@
 {
-   "app_key" : "application.generated.unity.steamvr.exe",
+   "alias_info" : {},
+   "app_key" : "application.generated.unity.vrarchitecturesimulation.exe",
    "bindings" : {
       "/actions/buggy" : {
          "sources" : [
@@ -111,6 +112,9 @@
                "inputs" : {
                   "click" : {
                      "output" : "/actions/default/in/teleport"
+                  },
+                  "touch" : {
+                     "output" : "/actions/default/in/trackpadtouch"
                   }
                },
                "mode" : "button",
@@ -170,6 +174,9 @@
                "inputs" : {
                   "click" : {
                      "output" : "/actions/default/in/teleport"
+                  },
+                  "touch" : {
+                     "output" : "/actions/default/in/trackpadtouch"
                   }
                },
                "mode" : "button",
@@ -206,6 +213,15 @@
                },
                "mode" : "trigger",
                "path" : "/user/hand/right/input/trigger"
+            },
+            {
+               "inputs" : {
+                  "click" : {
+                     "output" : "/actions/default/in/grabgrip"
+                  }
+               },
+               "mode" : "toggle_button",
+               "path" : "/user/hand/right/input/grip"
             }
          ]
       },
@@ -252,5 +268,7 @@
    },
    "controller_type" : "vive_controller",
    "description" : "",
-   "name" : "vive_controller"
+   "name" : "vive_controller",
+   "options" : {},
+   "simulated_actions" : []
 }

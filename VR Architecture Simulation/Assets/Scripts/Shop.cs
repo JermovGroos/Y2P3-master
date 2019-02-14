@@ -53,6 +53,7 @@ public class Shop : MonoBehaviour
             else
             {
                 int y = Mathf.RoundToInt(changeTabTrackpad.axis.y);
+                print(y);
                 if (y != 0)
                 {
                     if(y == 1)
@@ -90,12 +91,12 @@ public class Shop : MonoBehaviour
                 selectedHorIndex = 0;
             }
         }
-        float moveAmount = selectionTabs[previousHorIndex].transform.position.x - selectionTabs[selectedHorIndex].transform.position.x;
+        float moveAmount = selectionTabs[previousHorIndex].transform.localPosition.x - selectionTabs[selectedHorIndex].transform.localPosition.x;
         moveAmount /= ticks;
 
         for(int i = 0; i < ticks; i++)
         {
-            sectionHolder.Translate(new Vector2(moveAmount, 0));
+            sectionHolder.localPosition += (new Vector3(moveAmount, 0));
             yield return new WaitForSeconds(tickDelay);
         }
         UpdateShopItems();
@@ -117,12 +118,12 @@ public class Shop : MonoBehaviour
                 selectedVerIndex = 0;
             }
         }
-        float moveAmount = shopButtons[previousVerIndex].transform.position.y - shopButtons[selectedVerIndex].transform.position.y;
+        float moveAmount = shopButtons[previousVerIndex].transform.localPosition.y - shopButtons[selectedVerIndex].transform.localPosition.y;
         moveAmount /= ticks;
 
         for (int i = 0; i < ticks; i++)
         {
-            itemHolder.Translate(new Vector2(0, moveAmount));
+            itemHolder.localPosition += (new Vector3(0, moveAmount));
             yield return new WaitForSeconds(tickDelay);
         }
     }
