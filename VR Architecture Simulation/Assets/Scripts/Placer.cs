@@ -130,13 +130,6 @@ public class Placer : MonoBehaviour
                 trackingObj.transform.eulerAngles = snappedRotation;
             }
         }
-        else
-        {
-            if (rotationSnapButton.GetStateUp(inputSource))
-            {
-                snappingRotation = snappingRotation.ToggleBool();
-            }
-        }
     }
     void CalculateTilePositions(GameObject[] groundTiles)
     {
