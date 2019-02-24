@@ -10,7 +10,6 @@ public class Shop : MonoBehaviour
     public SteamVR_Action_Vector2 changeTabTrackpad;
     public SteamVR_Action_Boolean changeTabButton;
     public SteamVR_Action_Boolean selectButton;
-    public SteamVR_Input_Sources changeTabSource;
     public int selectedHorIndex;
     public int selectedVerIndex;
     float verTileDistance;
@@ -36,7 +35,7 @@ public class Shop : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (changeTabButton.GetStateDown(changeTabSource))
+        if (changeTabButton.GetStateDown(InputMan.rightHand))
         {
             int x = Mathf.RoundToInt(changeTabTrackpad.axis.x);
             if (x != 0)
@@ -67,7 +66,7 @@ public class Shop : MonoBehaviour
                 }
             }
         }
-        if (selectButton.GetStateDown(changeTabSource))
+        if (selectButton.GetStateDown(InputMan.rightHand))
         {
             shopButtons[selectedVerIndex].GetComponent<ItemButton>().Select();
         }

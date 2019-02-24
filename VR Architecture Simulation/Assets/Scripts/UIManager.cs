@@ -11,7 +11,6 @@ public class UIManager : MonoBehaviour
     public GameObject shop;
     public GameObject settings;
     public SteamVR_Action_Boolean shopToggleButton;
-    public SteamVR_Input_Sources shopToggleSource;
     bool toggledShop;
     [Header("ScreenFade")]
     public Animation fadeAnimation;
@@ -25,7 +24,7 @@ public class UIManager : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (shopToggleButton.GetStateDown(shopToggleSource))
+        if (shopToggleButton.GetStateDown(InputMan.leftHand))
         {
             ToggleShop();
         }

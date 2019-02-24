@@ -6,35 +6,81 @@ using UnityEngine.UI;
 public class Options : MonoBehaviour
 {
     public Text gridDivText;
-    public GameObject decreaseDiv, increaseDiv;
+    public List<TwoDemensionalGOList> selectableOptions = new List<TwoDemensionalGOList>();
+    int currentHorIndex;
+    int currentVerIndex;
+    UIButton currentSelected;
     // Start is called before the first frame update
     void Start()
     {
-        
+        UpdateGridDivision(Placer.placer.divisionAmount);
+        currentSelected = selectableOptions[currentVerIndex].xIndexes[currentHorIndex].GetComponent<UIButton>();
     }
 
     // Update is called once per frame
     void Update()
     {
-        
+        Vector2 changeAmount = new Vector2();
+        if (Input.GetKeyDown(KeyCode.RightArrow))
+        {
+            changeAmount.x = 1;
+        }
+        if (Input.GetKeyDown(KeyCode.DownArrow))
+        {
+            changeAmount.y = -1;
+        }
+        if(changeAmount.x != 0 || changeAmount.y != 0)
+        {
+            ChangeSelectPos(changeAmount);
+        }
+        if (Input.GetKeyDown(KeyCode.Space))
+        {
+            currentSelected.Interact();
+        }
+    }
+    public void ChangeSelectPos(Vector2 changeAmount)
+    {
+        currentVerIndex += (int)changeAmount.y;
+        currentHorIndex += (int)changeAmount.x;
+
+        if(currentVerIndex == selectableOptions.Count)
+        {
+            currentVerIndex = 0;
+        }
+        else
+        {
+            if(currentVerIndex < 0)
+            {
+                currentVerIndex = selectableOptions.Count - 1;
+            }
+        }
+        if(currentHorIndex == selectableOptions[currentVerIndex].xIndexes.Count)
+        {
+            currentHorIndex = 0;
+        }
+        else
+        {
+            if(currentHorIndex < 0)
+            {
+                currentHorIndex = selectableOptions[currentVerIndex].xIndexes.Count - 1;
+            }
+        }
+        currentSelected = selectableOptions[currentVerIndex].xIndexes[currentHorIndex].GetComponent<UIButton>();
+        print(currentSelected.gameObject.name);
     }
     public void UpdateGridDivision(int newDivValue)
     {
         gridDivText.text = newDivValue.ToString();
-        switch (newDivValue)
-        {
-            case 10:
-                increaseDiv.SetActive(false);
-                break;
-            case 9:
-                increaseDiv.SetActive(true);
-                break;
-            case 1:
-                decreaseDiv.SetActive(false);
-                break;
-            case 2:
-                decreaseDiv.SetActive(true);
-                break;
-        }
+    }
+
+    public void ChangePrimaryHand(bool isRightHanded)
+    {
+        InputMan.ChangePrimaryHand(isRightHanded);
+    }
+
+    [System.Serializable]
+    public struct TwoDemensionalGOList
+    {
+        public List<GameObject> xIndexes;
     }
 }

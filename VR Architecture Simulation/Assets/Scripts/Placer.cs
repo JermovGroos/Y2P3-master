@@ -13,7 +13,6 @@ public class Placer : MonoBehaviour
     public bool snappingPosition;
     public bool snappingRotation;
     public SteamVR_Action_Boolean positionSnapButton, placeButton;
-    public SteamVR_Input_Sources inputSource;
     public SteamVR_Action_Vector2 rotateButton;
     public SteamVR_Action_Boolean rotatePress, rotationSnapButton;
     public int rotateTurnAmount;
@@ -39,7 +38,7 @@ public class Placer : MonoBehaviour
     {
         if (trackingObj)
         {
-            if (placeButton.GetStateDown(inputSource))
+            if (placeButton.GetStateDown(InputMan.rightHand))
             {
                 StartCoroutine(ClearTrackingObject());
             }
@@ -67,10 +66,10 @@ public class Placer : MonoBehaviour
                         trackingObj.transform.position = placePos;
                     }
                 }
-                float rotateAmount = rotateButton.GetAxis(inputSource).x;
+                float rotateAmount = rotateButton.GetAxis(InputMan.rightHand).x;
                 if (snappingRotation)
                 {
-                    if (rotatePress.GetStateDown(inputSource))
+                    if (rotatePress.GetStateDown(InputMan.rightHand))
                     {
                         rotateAmount = Mathf.RoundToInt(rotateAmount);
                         rotateAmount *= rotateTurnAmount;
@@ -79,7 +78,7 @@ public class Placer : MonoBehaviour
                 }
                 else
                 {
-                    if (rotatePress.GetState(inputSource))
+                    if (rotatePress.GetState(InputMan.rightHand))
                     {
                         trackingObj.transform.Rotate(new Vector3(0, rotateAmount, 0));
                     }
@@ -104,14 +103,14 @@ public class Placer : MonoBehaviour
     }
     void ToggleGridSnap()
     {
-        if (positionSnapButton.GetStateDown(inputSource))
+        if (positionSnapButton.GetStateDown(InputMan.rightHand))
         {
             snappingPosition = true;
             ToggleGrid(true);
         }
         else
         {
-            if (positionSnapButton.GetStateUp(inputSource))
+            if (positionSnapButton.GetStateUp(InputMan.rightHand))
             {
                 snappingPosition = false;
                 ToggleGrid(false);
@@ -120,7 +119,7 @@ public class Placer : MonoBehaviour
     }
     void ToggleRotationSnap()
     {
-        if (rotationSnapButton.GetStateDown(inputSource))
+        if (rotationSnapButton.GetStateDown(InputMan.rightHand))
         {
             snappingRotation = snappingRotation.ToggleBool();
             if (snappingRotation)
@@ -188,6 +187,7 @@ public class Placer : MonoBehaviour
     {
         divisionAmount += changeAmount;
         divisionAmount = Mathf.Clamp(divisionAmount, 1, 10);
+        UIManager.uiManager.settings.GetComponent<Options>().UpdateGridDivision(divisionAmount);
         CalculateTilePositions(GameObject.FindGameObjectsWithTag("Ground"));
     }
 }
