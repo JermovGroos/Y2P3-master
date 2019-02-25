@@ -103,14 +103,14 @@ public class Placer : MonoBehaviour
     }
     void ToggleGridSnap()
     {
-        if (positionSnapButton.GetStateDown(InputMan.rightHand))
+        if (positionSnapButton.GetStateDown(InputMan.leftHand))
         {
             snappingPosition = true;
             ToggleGrid(true);
         }
         else
         {
-            if (positionSnapButton.GetStateUp(InputMan.rightHand))
+            if (positionSnapButton.GetStateUp(InputMan.leftHand))
             {
                 snappingPosition = false;
                 ToggleGrid(false);
@@ -127,6 +127,13 @@ public class Placer : MonoBehaviour
                 Vector3 snappedRotation = trackingObj.transform.eulerAngles;
                 snappedRotation.y = Mathf.RoundToInt(snappedRotation.y / rotateTurnAmount) * rotateTurnAmount;
                 trackingObj.transform.eulerAngles = snappedRotation;
+            }
+        }
+        else
+        {
+            if (rotationSnapButton.GetStateUp(InputMan.rightHand))
+            {
+                snappingRotation = snappingRotation.ToggleBool();
             }
         }
     }
@@ -189,5 +196,11 @@ public class Placer : MonoBehaviour
         divisionAmount = Mathf.Clamp(divisionAmount, 1, 10);
         UIManager.uiManager.settings.GetComponent<Options>().UpdateGridDivision(divisionAmount);
         CalculateTilePositions(GameObject.FindGameObjectsWithTag("Ground"));
+    }
+    public void ChangeSnapRotation(int changeAmount)
+    {
+        rotateTurnAmount += changeAmount;
+        rotateTurnAmount = Mathf.Clamp(rotateTurnAmount, 0, 360);
+        UIManager.uiManager.settings.GetComponent<Options>().UpdateRotationSnap(rotateTurnAmount);
     }
 }

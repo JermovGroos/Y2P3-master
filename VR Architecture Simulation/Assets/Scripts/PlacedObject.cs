@@ -4,6 +4,7 @@ using UnityEngine;
 
 public class PlacedObject : Interactable
 {
+    public Item itemData;
     // Start is called before the first frame update
     void Start()
     {
@@ -17,6 +18,6 @@ public class PlacedObject : Interactable
     }
     public override void Interact()
     {
-        Placer.placer.SetTrackingObject(gameObject);
+        UIManager.uiManager.
     }
 }

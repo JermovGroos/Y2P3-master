@@ -10,15 +10,19 @@ public class UIManager : MonoBehaviour
     [Header("Shop")]
     public GameObject shop;
     public GameObject settings;
+    public GameObject properties;
     public SteamVR_Action_Boolean shopToggleButton;
+    public SteamVR_Action_Boolean settingsToggleButton;
     bool toggledShop;
+    bool toggledSettings;
+    bool toggledProperties;
     [Header("ScreenFade")]
     public Animation fadeAnimation;
     public AnimationClip fadeAppear;
     public AnimationClip fadeRemove;
     // Start is called before the first frame update
     private void Awake()
-    {
+    
         uiManager = this;
     }
     // Update is called once per frame
@@ -27,6 +31,10 @@ public class UIManager : MonoBehaviour
         if (shopToggleButton.GetStateDown(InputMan.leftHand))
         {
             ToggleShop();
+        }
+        if (settingsToggleButton.GetStateDown(InputMan.rightHand))
+        {
+            ToggleSettings();
         }
     }
     public void ScreenFade(bool appear)
@@ -53,6 +61,31 @@ public class UIManager : MonoBehaviour
             shop.SetActive(true);
             toggledShop = true;
         }
+    }
+    public void ToggleSettings()
+    {
+        if (toggledSettings)
+        {
+            settings.SetActive(false);
+            toggledSettings = false;
+        }
+        else
+        {
+            settings.SetActive(true);
+            toggledSettings = true;
+        }
+    }
+    public void ToggleProperties(GameObject item)
+    {
+        if (toggledProperties)
+        {
+            properties.SetActive(false);
+        }
+        else
+        {
+            properties.SetActive(true);
+        }
+        toggledProperties = toggledProperties.ToggleBool();
     }
     public void DisableUI(GameObject toDisable)
     {
