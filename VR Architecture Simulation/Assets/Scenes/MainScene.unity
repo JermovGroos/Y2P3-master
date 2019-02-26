@@ -959,7 +959,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   availableMaterials:
   - {fileID: 2100000, guid: ceb48f72b3325c74e95838fb760d0ab0, type: 2}
-  - {fileID: 2100000, guid: 406981998f1234442a4f2eb50cfe07e1, type: 2}
+  - {fileID: 2100000, guid: e027e540c36bfcb48abe2c620eda21c0, type: 2}
   partIcon: {fileID: 21300000, guid: f4fa38332fdecec4f8d34f0204a121c3, type: 3}
   partname: BOOP
 --- !u!21 &441231982
@@ -3156,7 +3156,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 888aa00f2f1fec24eac9d80889a9a5ab, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  selectableOptions: []
+  selectableOptions:
+  - xIndexes: []
+  - xIndexes: []
   outlineScale: {x: 20, y: 20}
   acceptButton:
     actionPath: /actions/default/in/GrabPinch
@@ -3345,7 +3347,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   availableMaterials:
   - {fileID: 2100000, guid: ceb48f72b3325c74e95838fb760d0ab0, type: 2}
-  - {fileID: 2100000, guid: 406981998f1234442a4f2eb50cfe07e1, type: 2}
+  - {fileID: 2100000, guid: e027e540c36bfcb48abe2c620eda21c0, type: 2}
   partIcon: {fileID: 21300000, guid: f4fa38332fdecec4f8d34f0204a121c3, type: 3}
   partname: BOOP
 --- !u!1 &1566452225

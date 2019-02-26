@@ -26,6 +26,7 @@ public class UISelection : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        //VR
         Vector2 changeAmount = new Vector2();
         if (selectButton.GetLastStateDown(InputMan.rightHand))
         {
@@ -46,9 +47,43 @@ public class UISelection : MonoBehaviour
         {
             currentSelected.Interact();
         }
+
+        //PC
+        Vector2 changeAmtPC = new Vector2();
+        if (Input.GetKeyDown(KeyCode.RightArrow) || Input.GetKeyDown(KeyCode.LeftArrow))
+        {
+            if (Input.GetKeyDown(KeyCode.RightArrow))
+            {
+                changeAmtPC.x += 1;
+            }
+            else
+            {
+                changeAmtPC.x -= 1;
+            }
+        }
+        if (Input.GetKeyDown(KeyCode.UpArrow) || Input.GetKeyDown(KeyCode.DownArrow))
+        {
+            if (Input.GetKeyDown(KeyCode.DownArrow))
+            {
+                changeAmtPC.y += 1;
+            }
+            else
+            {
+                changeAmtPC.y -= 1;
+            }
+        }
+        if(changeAmtPC != Vector2.zero)
+        {
+            ChangeSelectPos(changeAmtPC);
+        }
+        if (Input.GetKeyDown(KeyCode.KeypadEnter))
+        {
+            currentSelected.Interact();
+        }
     }
     public void ChangeSelectPos(Vector2 changeAmount)
     {
+        print(changeAmount);
         currentVerIndex -= (int)changeAmount.y;
         Destroy(currentSelected.gameObject.GetComponent<Outline>());
         if(currentVerIndex < 0)
@@ -66,7 +101,7 @@ public class UISelection : MonoBehaviour
         currentHorIndex += (int)changeAmount.x;
         if (currentHorIndex < 0)
         {
-            currentHorIndex = selectableOptions[currentVerIndex].xIndexes.Count;
+            currentHorIndex = selectableOptions[currentVerIndex].xIndexes.Count - 1;
         }
         else
         {

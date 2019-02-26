@@ -31,11 +31,8 @@ public class PropertiesMenu : MonoBehaviour
         {
             uiSelection.selectableOptions[0].xIndexes.Clear();
         }
-        else
-        {
-            uiSelection.selectableOptions.Add(new UISelection.TwoDemensionalGOList());
-        }
-        for (int i = 0; i < activeTabButtons.Count; i++)
+        int backupCount = activeTabButtons.Count;
+        for (int i = 0; i < backupCount; i++)
         {
             Destroy(activeTabButtons[0]);
             activeTabButtons.RemoveAt(0);
@@ -48,22 +45,30 @@ public class PropertiesMenu : MonoBehaviour
             activeTabButtons.Add(newButton);
             uiSelection.selectableOptions[0].xIndexes.Add(newButton);
         }
-        UpdateProperties(activeTabButtons[0]);
+        UpdateProperties(activeTabButtons[0].GetComponent<PropertieTabData>().holdingPart);
     }
     public void UpdateProperties(GameObject target)
     {
         currentPart = target;
-        for (int i = 0; i < activeMaterialButtons.Count; i++)
+        if (uiSelection.selectableOptions.Count > 1)
         {
+            uiSelection.selectableOptions[uiSelection.selectableOptions.Count - 1].xIndexes.Clear();
+        }
+        int backupCount = activeMaterialButtons.Count;
+        for (int i = 0; i < backupCount; i++)
+        {
+            print(activeMaterialButtons.Count);
             Destroy(activeMaterialButtons[0]);
             activeMaterialButtons.RemoveAt(0);
         }
         for(int i = 0; i < target.GetComponent<PartData>().availableMaterials.Length; i++)
         {
+            print(target.GetComponent<PartData>().availableMaterials.Length);
             GameObject newMaterialButton = Instantiate(materialButton, materialHolder);
             newMaterialButton.GetComponent<PropertieMatData>().menu = this;
             newMaterialButton.GetComponent<PropertieMatData>().Initialize(target.GetComponent<PartData>().availableMaterials[i]);
             activeMaterialButtons.Add(newMaterialButton);
+            uiSelection.selectableOptions[uiSelection.selectableOptions.Count - 1].xIndexes.Add(newMaterialButton);
         }
     }
     public void ChangeMaterial(Material newMaterial)
