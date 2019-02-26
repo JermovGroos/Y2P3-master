@@ -22,7 +22,7 @@ public class UIManager : MonoBehaviour
     public AnimationClip fadeRemove;
     // Start is called before the first frame update
     private void Awake()
-    
+    {
         uiManager = this;
     }
     // Update is called once per frame

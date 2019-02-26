@@ -18,6 +18,5 @@ public class PlacedObject : Interactable
     }
     public override void Interact()
     {
-        UIManager.uiManager.
     }
 }
