@@ -14,12 +14,14 @@ public class Shop : MonoBehaviour
     public int selectedVerIndex;
     float verTileDistance;
     public GameObject[] selectionTabs;
+    public Animation[] indicatorHolders;
     public List<GameObject> shopButtons = new List<GameObject>();
     public Transform sectionHolder;
     public Transform itemHolder;
     public float tickDelay;
     public int ticks;
     public GameObject shopItem;
+    bool canMove = true;
     // Start is called before the first frame update
     void Start()
     {
@@ -29,18 +31,51 @@ public class Shop : MonoBehaviour
             listedSelecTabs.Add(child.gameObject);
         }
         selectionTabs = listedSelecTabs.ToArray();
-        UpdateShopItems();
+        StartCoroutine(Open());
     }
 
     // Update is called once per frame
     void Update()
     {
-        if (changeTabButton.GetStateDown(InputMan.rightHand))
+        //VR
+        if (canMove)
         {
-            int x = Mathf.RoundToInt(changeTabTrackpad.axis.x);
-            if (x != 0)
+            if (changeTabButton.GetState(InputMan.rightHand))
             {
-                if(x == 1)
+                int x = Mathf.RoundToInt(changeTabTrackpad.axis.x);
+                if (x != 0)
+                {
+                    if (x == 1)
+                    {
+                        StartCoroutine(ChangeHorIndex(1));
+                    }
+                    else
+                    {
+                        StartCoroutine(ChangeHorIndex(-1));
+                    }
+                }
+                else
+                {
+                    int y = Mathf.RoundToInt(changeTabTrackpad.axis.y);
+                    print(y);
+                    if (y != 0)
+                    {
+                        if (y == 1)
+                        {
+                            StartCoroutine(ChangeVerIndex(-1));
+                        }
+                        else
+                        {
+                            StartCoroutine(ChangeVerIndex(1));
+                        }
+                    }
+                }
+            }
+
+            //PC
+            if (Input.GetKey(KeyCode.RightArrow) || Input.GetKey(KeyCode.LeftArrow))
+            {
+                if (Input.GetKey(KeyCode.RightArrow))
                 {
                     StartCoroutine(ChangeHorIndex(1));
                 }
@@ -49,27 +84,24 @@ public class Shop : MonoBehaviour
                     StartCoroutine(ChangeHorIndex(-1));
                 }
             }
-            else
+            if (Input.GetKey(KeyCode.UpArrow) || Input.GetKey(KeyCode.DownArrow))
             {
-                int y = Mathf.RoundToInt(changeTabTrackpad.axis.y);
-                print(y);
-                if (y != 0)
+                if (Input.GetKey(KeyCode.DownArrow))
                 {
-                    if(y == 1)
-                    {
-                        StartCoroutine(ChangeVerIndex(-1));
-                    }
-                    else
-                    {
-                        StartCoroutine(ChangeVerIndex(1));
-                    }
+                    StartCoroutine(ChangeVerIndex(1));
+                }
+                else
+                {
+                    StartCoroutine(ChangeVerIndex(-1));
                 }
             }
+            if (selectButton.GetStateDown(InputMan.rightHand) || Input.GetKeyDown(KeyCode.KeypadEnter))
+            {
+                shopButtons[selectedVerIndex].GetComponent<ItemButton>().Select();
+            }
         }
-        if (selectButton.GetStateDown(InputMan.rightHand))
-        {
-            shopButtons[selectedVerIndex].GetComponent<ItemButton>().Select();
-        }
+
+
     }
     public void SpawnObject(GameObject objectToPlace)
     {
@@ -77,6 +109,7 @@ public class Shop : MonoBehaviour
     }
     public IEnumerator ChangeHorIndex(int changeAmount)
     {
+        canMove = false;
         int previousHorIndex = selectedHorIndex;
         selectedHorIndex += changeAmount;
         if(selectedHorIndex < 0)
@@ -92,18 +125,19 @@ public class Shop : MonoBehaviour
         }
         float moveAmount = selectionTabs[previousHorIndex].transform.localPosition.x - selectionTabs[selectedHorIndex].transform.localPosition.x;
         moveAmount /= ticks;
-
-        for(int i = 0; i < ticks; i++)
+        StartCoroutine(ClearShopItems());
+        for (int i = 0; i < ticks; i++)
         {
             sectionHolder.localPosition += (new Vector3(moveAmount, 0));
             yield return new WaitForSeconds(tickDelay);
         }
-        UpdateShopItems();
+        StartCoroutine(UpdateShopItems());
         FixVerIndex();
     }
 
     public IEnumerator ChangeVerIndex(int changeAmount)
     {
+        canMove = false;
         int previousVerIndex = selectedVerIndex;
         selectedVerIndex += changeAmount;
         if (selectedVerIndex < 0)
@@ -125,6 +159,7 @@ public class Shop : MonoBehaviour
             itemHolder.localPosition += (new Vector3(0, moveAmount));
             yield return new WaitForSeconds(tickDelay);
         }
+        canMove = true;
     }
     void FixVerIndex()
     {
@@ -142,18 +177,46 @@ public class Shop : MonoBehaviour
         verTileDistance = -(shopItem.GetComponent<RectTransform>().rect.height + itemHolder.GetComponent<VerticalLayoutGroup>().spacing);
         return (verTileDistance);
     }
-    void UpdateShopItems()
+    IEnumerator UpdateShopItems()
     {
-        foreach(GameObject button in shopButtons)
+        GameObject newItem = null;
+        foreach (Item item in selectionTabs[selectedHorIndex].GetComponent<ShopTabData>().tabItems)
         {
+            newItem = Instantiate(shopItem, itemHolder);
+            shopButtons.Add(newItem);
+            newItem.GetComponent<ItemButton>().itemData = item;
+            newItem.GetComponent<Animation>().Play("ShopItemAppear");
+            yield return new WaitForSeconds(newItem.GetComponent<Animation>().clip.length / 4);
+        }
+        if(newItem != null)
+        {
+            yield return new WaitForSeconds(newItem.GetComponent<Animation>().clip.length / 4 * 3);
+        }
+        canMove = true;
+    }
+    public IEnumerator Open()
+    {
+        canMove = false;
+        for(int i = 0; i < indicatorHolders.Length; i++)
+        {
+            indicatorHolders[i].Play();
+        }
+        for(int i = 0; i < selectionTabs.Length; i++)
+        {
+            selectionTabs[i].GetComponent<Animation>().Play();
+            yield return new WaitForSeconds(selectionTabs[i].GetComponent<Animation>().clip.length / 4);
+        }
+        StartCoroutine(UpdateShopItems());
+    }
+    public IEnumerator ClearShopItems()
+    {
+        for (int i = shopButtons.Count - 1; i >= 0; i--)
+        {
+            GameObject button = shopButtons[i];
+            button.GetComponent<Animation>().Play("ShopItemDisappear");
+            yield return new WaitForSeconds(button.GetComponent<Animation>().GetClip("ShopItemDisappear").length);
             Destroy(button);
         }
         shopButtons = new List<GameObject>();
-        foreach(Item item in selectionTabs[selectedHorIndex].GetComponent<ShopTabData>().tabItems)
-        {
-            GameObject newItem = Instantiate(shopItem, itemHolder);
-            shopButtons.Add(newItem);
-            newItem.GetComponent<ItemButton>().itemData = item;
-        }
     }
 }

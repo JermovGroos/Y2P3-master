@@ -59,6 +59,7 @@ public class UIManager : MonoBehaviour
         else
         {
             shop.SetActive(true);
+            StartCoroutine(shop.GetComponent<Shop>().Open());
             toggledShop = true;
         }
     }
