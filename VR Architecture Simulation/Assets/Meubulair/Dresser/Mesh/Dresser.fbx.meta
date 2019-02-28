@@ -17,6 +17,8 @@ ModelImporter:
     3300002: Lades
     4300000: Base
     4300002: Lades
+    6400000: Base
+    6400002: Lades
   externalObjects:
   - first:
       type: UnityEngine:Material
@@ -60,7 +62,7 @@ ModelImporter:
     lODScreenPercentages: []
     globalScale: 1
     meshCompression: 0
-    addColliders: 0
+    addColliders: 1
     useSRGBMaterialColor: 1
     importVisibility: 1
     importBlendShapes: 1
