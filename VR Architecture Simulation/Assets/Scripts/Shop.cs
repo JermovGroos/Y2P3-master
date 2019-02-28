@@ -22,8 +22,10 @@ public class Shop : MonoBehaviour
     public int ticks;
     public GameObject shopItem;
     bool canMove = true;
+    bool doneRemoving;
+    Vector3 requiredHorPos;
     // Start is called before the first frame update
-    void Start()
+    void Awake()
     {
         List<GameObject> listedSelecTabs = new List<GameObject>();
         foreach(Transform child in sectionHolder)
@@ -31,7 +33,6 @@ public class Shop : MonoBehaviour
             listedSelecTabs.Add(child.gameObject);
         }
         selectionTabs = listedSelecTabs.ToArray();
-        StartCoroutine(Open());
     }
 
     // Update is called once per frame
@@ -124,15 +125,22 @@ public class Shop : MonoBehaviour
             }
         }
         float moveAmount = selectionTabs[previousHorIndex].transform.localPosition.x - selectionTabs[selectedHorIndex].transform.localPosition.x;
+        requiredHorPos = sectionHolder.transform.localPosition;
+        requiredHorPos.x += moveAmount;
         moveAmount /= ticks;
-        StartCoroutine(ClearShopItems());
+        StartCoroutine(ClearShopItems(false));
         for (int i = 0; i < ticks; i++)
         {
             sectionHolder.localPosition += (new Vector3(moveAmount, 0));
             yield return new WaitForSeconds(tickDelay);
         }
+        while (!doneRemoving)
+        {
+            yield return null;
+        }
         StartCoroutine(UpdateShopItems());
         FixVerIndex();
+        doneRemoving = false;
     }
 
     public IEnumerator ChangeVerIndex(int changeAmount)
@@ -203,20 +211,44 @@ public class Shop : MonoBehaviour
         }
         for(int i = 0; i < selectionTabs.Length; i++)
         {
-            selectionTabs[i].GetComponent<Animation>().Play();
-            yield return new WaitForSeconds(selectionTabs[i].GetComponent<Animation>().clip.length / 4);
+            if(i >= selectedHorIndex - 1)
+            {
+                selectionTabs[i].GetComponent<Animation>().Play();
+                yield return new WaitForSeconds(selectionTabs[i].GetComponent<Animation>().clip.length / 4);
+            }
+            else
+            {
+                selectionTabs[i].transform.localScale = Vector3.one;
+            }
         }
         StartCoroutine(UpdateShopItems());
     }
-    public IEnumerator ClearShopItems()
+    public IEnumerator ClearShopItems(bool open)
     {
-        for (int i = shopButtons.Count - 1; i >= 0; i--)
+        while(shopButtons.Count > 0)
         {
-            GameObject button = shopButtons[i];
+            GameObject button = shopButtons[shopButtons.Count - 1];
             button.GetComponent<Animation>().Play("ShopItemDisappear");
             yield return new WaitForSeconds(button.GetComponent<Animation>().GetClip("ShopItemDisappear").length);
             Destroy(button);
         }
         shopButtons = new List<GameObject>();
+        doneRemoving = true;
+    }
+    public void InstantClose()
+    {
+        StopAllCoroutines();
+        canMove = true;
+        doneRemoving = false;
+        for (int i = shopButtons.Count - 1; i >= 0; i--)
+        {
+            GameObject button = shopButtons[i];
+            Destroy(button);
+        }
+        for(int i = 0; i < selectionTabs.Length; i++)
+        {
+            selectionTabs[i].transform.localScale = Vector3.zero;
+        }
+        sectionHolder.transform.localPosition = requiredHorPos;
     }
 }

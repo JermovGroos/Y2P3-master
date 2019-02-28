@@ -53,6 +53,7 @@ public class UIManager : MonoBehaviour
     {
         if (toggledShop)
         {
+            shop.GetComponent<Shop>().InstantClose();
             shop.SetActive(false);
             toggledShop = false;
         }
