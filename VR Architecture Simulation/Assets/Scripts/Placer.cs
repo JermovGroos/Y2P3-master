@@ -16,6 +16,10 @@ public class Placer : MonoBehaviour
     public SteamVR_Action_Vector2 rotateButton;
     public SteamVR_Action_Boolean rotatePress, rotationSnapButton;
     public int rotateTurnAmount;
+    bool canPlace;
+    [SerializeField] Color canPlaceColor, cannotPlaceColor;
+    [SerializeField] Material placementMaterial;
+    [SerializeField] PlacementPart[] ogPartData;
 
     [Range(1, 10)]
     public int divisionAmount;
@@ -38,14 +42,17 @@ public class Placer : MonoBehaviour
     {
         if (trackingObj)
         {
-            if (placeButton.GetStateDown(InputMan.rightHand))
+            if (!placeButton.GetStateDown(InputMan.rightHand))
             {
-                StartCoroutine(ClearTrackingObject());
+                StartCoroutine(PlaceTrackingObject());
             }
             else
             {
+                //Snapping
                 ToggleGridSnap();
                 ToggleRotationSnap();
+
+                //PlacementCheck
                 RaycastHit hit;
                 Ray ray = new Ray(hand.position, hand.forward);
                 Vector3 placePos = hand.transform.forward * 5;
@@ -53,8 +60,11 @@ public class Placer : MonoBehaviour
                 {
                     if (Physics.Raycast(ray, out hit, 1000, snapMask))
                     {
-                        placePos = hit.transform.position;
-                        trackingObj.transform.position = placePos;
+                        if (CheckPosition(hit.transform.gameObject))
+                        {
+                            placePos = hit.transform.position;
+                            trackingObj.transform.position = placePos;
+                        }
                     }
                 }
                 else
@@ -62,8 +72,11 @@ public class Placer : MonoBehaviour
 
                     if (Physics.Raycast(ray, out hit, 1000, nonSnapMask))
                     {
-                        placePos = hit.point;
-                        trackingObj.transform.position = placePos;
+                        if (CheckPosition(hit.transform.gameObject))
+                        {
+                            placePos = hit.point;
+                            trackingObj.transform.position = placePos;
+                        }
                     }
                 }
                 float rotateAmount = rotateButton.GetAxis(InputMan.rightHand).x;
@@ -83,6 +96,7 @@ public class Placer : MonoBehaviour
                         trackingObj.transform.Rotate(new Vector3(0, rotateAmount, 0));
                     }
                 }
+
             }
         }
     }
@@ -92,11 +106,23 @@ public class Placer : MonoBehaviour
         {
             trackingObj = thisObject;
             trackingObj.GetComponent<Collider>().enabled = false;
+            List<PlacementPart> allObjectMaterials = new List<PlacementPart>();
+            for(int i = 0; i < thisObject.transform.childCount; i++)
+            {
+                allObjectMaterials.Add(new PlacementPart(thisObject.transform.GetChild(i).gameObject));
+                allObjectMaterials[allObjectMaterials.Count - 1].part.GetComponent<MeshRenderer>().material = placementMaterial;
+            }
+            ogPartData = allObjectMaterials.ToArray();
+            CheckPlacable();
         }
     }
-    public IEnumerator ClearTrackingObject()
+    public IEnumerator PlaceTrackingObject()
     {
         GameObject oldTracker = trackingObj;
+        foreach(PlacementPart partData in ogPartData)
+        {
+            partData.ResetMaterial();
+        }
         trackingObj = null;
         yield return new WaitForSeconds(0.1f);
         oldTracker.GetComponent<Collider>().enabled = true;
@@ -202,5 +228,46 @@ public class Placer : MonoBehaviour
         rotateTurnAmount += changeAmount;
         rotateTurnAmount = Mathf.Clamp(rotateTurnAmount, 0, 360);
         UIManager.uiManager.settings.GetComponent<Options>().UpdateRotationSnap(rotateTurnAmount);
+    }
+    public bool CheckPosition(GameObject hitObject)
+    {
+        for(int i = 0; i < trackingObj.GetComponent<PlacedObject>().requiredObjectType.Length; i++)
+        {
+            if(trackingObj.GetComponent<PlacedObject>().requiredObjectType[i] == hitObject.GetComponent<PlacedObject>().objectType)
+            {
+                return true;
+            }
+        }
+        return false;
+    }
+    public void CheckPlacable()
+    {
+        if(Physics.BoxCast(trackingObj.transform.position, trackingObj.GetComponent<BoxCollider>().size / 2, Vector3.zero, trackingObj.transform.rotation))
+        {
+            canPlace = false;
+            placementMaterial.color = cannotPlaceColor;
+        }
+        else
+        {
+            canPlace = true;
+            placementMaterial.color = canPlaceColor;
+        }
+    }
+    public class PlacementPart
+    {
+        public GameObject part;
+        public Material ogMaterial;
+
+
+        public void ResetMaterial()
+        {
+            part.GetComponent<MeshRenderer>().material = ogMaterial;
+        }
+
+        public PlacementPart(GameObject thisPart)
+        {
+            part = thisPart;
+            ogMaterial = part.GetComponent<MeshRenderer>().material;
+        }
     }
 }

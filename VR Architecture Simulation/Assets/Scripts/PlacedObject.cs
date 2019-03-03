@@ -5,6 +5,9 @@ using UnityEngine;
 public class PlacedObject : Interactable
 {
     public Item itemData;
+    public bool moveable;
+    public ObjectTypes[] requiredObjectType;
+    public ObjectTypes objectType = ObjectTypes.NonStackable;
     // Start is called before the first frame update
     void Start()
     {
@@ -19,4 +22,9 @@ public class PlacedObject : Interactable
     public override void Interact()
     {
     }
+}
+
+public enum ObjectTypes
+{
+    Wall, Floor, Ceiling, NonStackable, Stackable
 }
