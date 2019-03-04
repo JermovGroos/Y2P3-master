@@ -21,7 +21,7 @@ public class Options : UIMenu
 
     }
 
-    public void UpdateGridDivision(int newDivValue)
+    public void UpdateGridDivision(float newDivValue)
     {
         gridDivText.text = newDivValue.ToString();
     }

@@ -21,7 +21,8 @@ public class Placer : MonoBehaviour
     public Material placementMaterial;
     [SerializeField] PlacementPart[] ogPartData;
 
-    [Range(1, 10)]
+    [Range(0.1f, 1)]
+    public float gritTileSize;
     public int divisionAmount;
     public GameObject tile;
     public Vector2 tileSize;
@@ -34,7 +35,7 @@ public class Placer : MonoBehaviour
     }
     private void Start()
     {
-        CalculateTilePositions(GameObject.FindGameObjectsWithTag("Ground"));
+        //CalculateTilePositions(GameObject.FindGameObjectsWithTag("Ground"));
     }
 
     // Update is called once per frame
@@ -56,27 +57,18 @@ public class Placer : MonoBehaviour
                 RaycastHit hit;
                 Ray ray = new Ray(hand.position, hand.forward);
                 Vector3 placePos = hand.transform.forward * 5;
-                if (snappingPosition)
+                if (Physics.Raycast(ray, out hit, 1000, nonSnapMask))
                 {
-                    if (Physics.Raycast(ray, out hit, 1000, snapMask))
+                    if (CheckPosition(hit.transform.gameObject))
                     {
-                        if (CheckPosition(hit.transform.gameObject))
+                        Vector3 hitPoint = hit.point;
+                        if (snappingPosition)
                         {
-                            placePos = hit.transform.position;
-                            trackingObj.transform.position = placePos;
+                            hitPoint.x = Mathf.RoundToInt(hitPoint.x / gritTileSize) * gritTileSize;
+                            hitPoint.z = Mathf.RoundToInt(hitPoint.z / gritTileSize) * gritTileSize;
                         }
-                    }
-                }
-                else
-                {
-
-                    if (Physics.Raycast(ray, out hit, 1000, nonSnapMask))
-                    {
-                        if (CheckPosition(hit.transform.gameObject))
-                        {
-                            placePos = hit.point;
-                            trackingObj.transform.position = placePos;
-                        }
+                        placePos = hitPoint;
+                        trackingObj.transform.position = placePos;
                     }
                 }
                 float rotateAmount = rotateButton.GetAxis(InputMan.rightHand).x;
@@ -133,14 +125,14 @@ public class Placer : MonoBehaviour
         if (positionSnapButton.GetStateDown(InputMan.leftHand))
         {
             snappingPosition = true;
-            ToggleGrid(true);
+            //ToggleGrid(true);
         }
         else
         {
             if (positionSnapButton.GetStateUp(InputMan.leftHand))
             {
                 snappingPosition = false;
-                ToggleGrid(false);
+                //ToggleGrid(false);
             }
         }
     }
@@ -217,12 +209,12 @@ public class Placer : MonoBehaviour
             tile.SetActive(show);
         }
     }
-    public void ChangeTileDivision(int changeAmount)
+    public void ChangeTileDivision(float changeAmount)
     {
-        divisionAmount += changeAmount;
-        divisionAmount = Mathf.Clamp(divisionAmount, 1, 10);
-        UIManager.uiManager.settings.GetComponent<Options>().UpdateGridDivision(divisionAmount);
-        CalculateTilePositions(GameObject.FindGameObjectsWithTag("Ground"));
+        gritTileSize += changeAmount;
+        gritTileSize = Mathf.Clamp(gritTileSize, 0.1f, 1);
+        UIManager.uiManager.settings.GetComponent<Options>().UpdateGridDivision(gritTileSize);
+        //CalculateTilePositions(GameObject.FindGameObjectsWithTag("Ground"));
     }
     public void ChangeSnapRotation(int changeAmount)
     {
