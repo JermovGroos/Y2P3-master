@@ -4,7 +4,7 @@ using UnityEngine;
 using Valve.VR;
 using UnityEngine.UI;
 
-public class Shop : MonoBehaviour
+public class Shop : UIMenu
 {
     public Placer placingSystem;
     public SteamVR_Action_Vector2 changeTabTrackpad;
@@ -23,7 +23,8 @@ public class Shop : MonoBehaviour
     public GameObject shopItem;
     bool canMove = true;
     bool doneRemoving;
-    Vector3 requiredHorPos;
+    public Vector3 requiredHorPos;
+    public Vector3 requiredVerPos;
     // Start is called before the first frame update
     void Awake()
     {
@@ -33,6 +34,8 @@ public class Shop : MonoBehaviour
             listedSelecTabs.Add(child.gameObject);
         }
         selectionTabs = listedSelecTabs.ToArray();
+        requiredHorPos = sectionHolder.localPosition;
+        requiredVerPos = itemHolder.localPosition;
     }
 
     // Update is called once per frame
@@ -160,6 +163,8 @@ public class Shop : MonoBehaviour
             }
         }
         float moveAmount = shopButtons[previousVerIndex].transform.localPosition.y - shopButtons[selectedVerIndex].transform.localPosition.y;
+        requiredVerPos = itemHolder.localPosition;
+        requiredVerPos.y += moveAmount;
         moveAmount /= ticks;
 
         for (int i = 0; i < ticks; i++)
@@ -201,8 +206,9 @@ public class Shop : MonoBehaviour
             yield return new WaitForSeconds(newItem.GetComponent<Animation>().clip.length / 4 * 3);
         }
         canMove = true;
+        UIManager.uiManager.canToggle = true;
     }
-    public IEnumerator Open()
+    public override IEnumerator Open()
     {
         canMove = false;
         for(int i = 0; i < indicatorHolders.Length; i++)
@@ -231,24 +237,29 @@ public class Shop : MonoBehaviour
             button.GetComponent<Animation>().Play("ShopItemDisappear");
             yield return new WaitForSeconds(button.GetComponent<Animation>().GetClip("ShopItemDisappear").length);
             Destroy(button);
+            shopButtons.RemoveAt(shopButtons.Count - 1);
         }
         shopButtons = new List<GameObject>();
         doneRemoving = true;
     }
-    public void InstantClose()
+    public override void InstantClose()
     {
         StopAllCoroutines();
         canMove = true;
         doneRemoving = false;
+        sectionHolder.transform.localPosition = requiredHorPos;
+        itemHolder.transform.localPosition = requiredVerPos;
+        FixVerIndex();
         for (int i = shopButtons.Count - 1; i >= 0; i--)
         {
             GameObject button = shopButtons[i];
             Destroy(button);
+            shopButtons.RemoveAt(i);
         }
         for(int i = 0; i < selectionTabs.Length; i++)
         {
             selectionTabs[i].transform.localScale = Vector3.zero;
         }
-        sectionHolder.transform.localPosition = requiredHorPos;
+        gameObject.SetActive(false);
     }
 }

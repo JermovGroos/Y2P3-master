@@ -16,9 +16,9 @@ public class Placer : MonoBehaviour
     public SteamVR_Action_Vector2 rotateButton;
     public SteamVR_Action_Boolean rotatePress, rotationSnapButton;
     public int rotateTurnAmount;
-    bool canPlace;
-    [SerializeField] Color canPlaceColor, cannotPlaceColor;
-    [SerializeField] Material placementMaterial;
+    public bool canPlace;
+    public Color canPlaceColor, cannotPlaceColor = Color.white;
+    public Material placementMaterial;
     [SerializeField] PlacementPart[] ogPartData;
 
     [Range(1, 10)]
@@ -42,7 +42,7 @@ public class Placer : MonoBehaviour
     {
         if (trackingObj)
         {
-            if (!placeButton.GetStateDown(InputMan.rightHand))
+            if (placeButton.GetStateDown(InputMan.rightHand) && canPlace)
             {
                 StartCoroutine(PlaceTrackingObject());
             }
@@ -96,7 +96,7 @@ public class Placer : MonoBehaviour
                         trackingObj.transform.Rotate(new Vector3(0, rotateAmount, 0));
                     }
                 }
-
+                CheckPlacable();
             }
         }
     }
@@ -118,6 +118,7 @@ public class Placer : MonoBehaviour
     }
     public IEnumerator PlaceTrackingObject()
     {
+        print("PLACED");
         GameObject oldTracker = trackingObj;
         foreach(PlacementPart partData in ogPartData)
         {
@@ -242,16 +243,18 @@ public class Placer : MonoBehaviour
     }
     public void CheckPlacable()
     {
-        if(Physics.BoxCast(trackingObj.transform.position, trackingObj.GetComponent<BoxCollider>().size / 2, Vector3.zero, trackingObj.transform.rotation))
+        Collider[] collisions = Physics.OverlapBox(trackingObj.transform.position + trackingObj.GetComponent<BoxCollider>().center, trackingObj.GetComponent<BoxCollider>().size / 2, trackingObj.transform.rotation);
+        foreach(Collider col in collisions)
         {
-            canPlace = false;
-            placementMaterial.color = cannotPlaceColor;
+            if(col.gameObject != trackingObj)
+            {
+                canPlace = false;
+                placementMaterial.SetColor("_BaseColor", cannotPlaceColor);
+                return;
+            }
         }
-        else
-        {
-            canPlace = true;
-            placementMaterial.color = canPlaceColor;
-        }
+        canPlace = true;
+        placementMaterial.SetColor("_BaseColor", canPlaceColor);
     }
     public class PlacementPart
     {

@@ -4,7 +4,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using Valve.VR;
 
-public class Options : MonoBehaviour
+public class Options : UIMenu
 {
     public Text gridDivText;
     public Text rotSnapText;
@@ -33,6 +33,15 @@ public class Options : MonoBehaviour
     public void ChangePrimaryHand(bool isRightHanded)
     {
         InputMan.ChangePrimaryHand(isRightHanded);
+    }
+    public override IEnumerator Open()
+    {
+        yield return null;
+        UIManager.uiManager.canToggle = true;
+    }
+    public override void InstantClose()
+    {
+        gameObject.SetActive(false);
     }
 
 }

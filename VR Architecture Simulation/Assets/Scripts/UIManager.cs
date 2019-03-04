@@ -11,11 +11,10 @@ public class UIManager : MonoBehaviour
     public GameObject shop;
     public GameObject settings;
     public GameObject properties;
+    public GameObject[] allMenus;
     public SteamVR_Action_Boolean shopToggleButton;
     public SteamVR_Action_Boolean settingsToggleButton;
-    bool toggledShop;
-    bool toggledSettings;
-    bool toggledProperties;
+    public bool canToggle;
     [Header("ScreenFade")]
     public Animation fadeAnimation;
     public AnimationClip fadeAppear;
@@ -28,13 +27,13 @@ public class UIManager : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (shopToggleButton.GetStateDown(InputMan.leftHand))
+        if (shopToggleButton.GetStateDown(InputMan.leftHand) && canToggle)
         {
-            ToggleShop();
+            ToggleMenu(shop);
         }
-        if (settingsToggleButton.GetStateDown(InputMan.rightHand))
+        if (settingsToggleButton.GetStateDown(InputMan.rightHand) && canToggle)
         {
-            ToggleSettings();
+            ToggleMenu(settings);
         }
     }
     public void ScreenFade(bool appear)
@@ -49,45 +48,29 @@ public class UIManager : MonoBehaviour
         }
         fadeAnimation.Play();
     }
-    public void ToggleShop()
+    public void ToggleMenu(GameObject menu)
     {
-        if (toggledShop)
+        if (menu.activeSelf)
         {
-            shop.GetComponent<Shop>().InstantClose();
-            shop.SetActive(false);
-            toggledShop = false;
+            menu.GetComponent<UIMenu>().InstantClose();
         }
         else
         {
-            shop.SetActive(true);
-            StartCoroutine(shop.GetComponent<Shop>().Open());
-            toggledShop = true;
+            foreach (GameObject thisMenu in allMenus)
+            {
+                if (thisMenu != menu)
+                {
+                    if (thisMenu.activeSelf)
+                    {
+                        thisMenu.GetComponent<UIMenu>().InstantClose();
+                        break;
+                    }
+                }
+            }
+            menu.SetActive(true);
+            canToggle = false;
+            StartCoroutine(menu.GetComponent<UIMenu>().Open());
         }
-    }
-    public void ToggleSettings()
-    {
-        if (toggledSettings)
-        {
-            settings.SetActive(false);
-            toggledSettings = false;
-        }
-        else
-        {
-            settings.SetActive(true);
-            toggledSettings = true;
-        }
-    }
-    public void ToggleProperties(GameObject item)
-    {
-        if (toggledProperties)
-        {
-            properties.SetActive(false);
-        }
-        else
-        {
-            properties.SetActive(true);
-        }
-        toggledProperties = toggledProperties.ToggleBool();
     }
     public void DisableUI(GameObject toDisable)
     {
