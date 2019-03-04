@@ -21,6 +21,7 @@ public class PlacedObject : Interactable
     }
     public override void Interact()
     {
+        Placer.placer.SetTrackingObject(gameObject);
     }
 }
 

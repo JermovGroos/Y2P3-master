@@ -12,7 +12,7 @@ GameObject:
   - component: {fileID: 815596850942392318}
   - component: {fileID: 3287318934105505830}
   - component: {fileID: 1956748450344411203}
-  m_Layer: 0
+  m_Layer: 4
   m_Name: Lades
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -106,7 +106,7 @@ GameObject:
   - component: {fileID: 2936274070618451525}
   - component: {fileID: 638263316949822376}
   - component: {fileID: 8040274750335785247}
-  m_Layer: 0
+  m_Layer: 4
   m_Name: Dresser
   m_TagString: Interactable
   m_Icon: {fileID: 0}
@@ -170,7 +170,7 @@ GameObject:
   - component: {fileID: 6268502043254358977}
   - component: {fileID: 4121728731912748201}
   - component: {fileID: 1317729008982459335}
-  m_Layer: 0
+  m_Layer: 4
   m_Name: Base
   m_TagString: Untagged
   m_Icon: {fileID: 0}
