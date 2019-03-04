@@ -4,24 +4,24 @@ ModelImporter:
   serializedVersion: 23
   fileIDToRecycleName:
     100000: Cube
-    100002: Lamp
+    100002: Lamp.001
     100004: LampStand
     100006: //RootNode
     400000: Cube
-    400002: Lamp
+    400002: Lamp.001
     400004: LampStand
     400006: //RootNode
-    2100000: Material.003
-    2100002: Material.005
+    2100000: Material.007
+    2100002: Material.003
     2100004: Material.004
     2300000: Cube
-    2300002: Lamp
+    2300002: Lamp.001
     2300004: LampStand
     3300000: Cube
-    3300002: Lamp
+    3300002: Lamp.001
     3300004: LampStand
-    4300000: Cube
-    4300002: Lamp
+    4300000: Lamp.001
+    4300002: Cube
     4300004: LampStand
   externalObjects: {}
   materials:
