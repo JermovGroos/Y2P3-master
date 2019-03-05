@@ -8,9 +8,7 @@ public class Placer : MonoBehaviour
 {
     public static Placer placer;
     public GameObject trackingObj;
-    GameObject snappingObject;
-    public LayerMask snapMask, placementMask;
-    public Transform vertIndicator;
+    public LayerMask placementMask;
     public Vector3 offset;
     public Transform hand;
     public bool snappingPosition;
@@ -25,6 +23,7 @@ public class Placer : MonoBehaviour
     public Color canPlaceColor, cannotPlaceColor = Color.white;
     public Material placementMaterial;
     [SerializeField] PlacementPart[] ogPartData;
+    public bool canSetObject = true;
 
     [Range(0.1f, 1)]
     public float gritTileSize;
@@ -46,42 +45,6 @@ public class Placer : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (snapButton.GetState(InputMan.leftHand) && !vertSnapping)
-        {
-            RaycastHit hit;
-            Ray ray = new Ray(hand.position, hand.forward);
-            if (Physics.Raycast(ray, out hit, 1000f, snapMask, QueryTriggerInteraction.Ignore))
-            {
-                snappingObject = hit.transform.gameObject;
-                Vector3 nearestVert = Vector3.zero;
-                float nearestVertDistance = Mathf.Infinity;
-                foreach(Transform child in hit.transform)
-                {
-                    foreach(Vector3 vert in child.GetComponent<MeshFilter>().mesh.vertices)
-                    {
-                        if(Vector3.Distance(hit.point, hit.transform.TransformPoint(vert)) < nearestVertDistance)
-                        {
-                            nearestVert = vert;
-                            nearestVertDistance = Vector3.Distance(hit.point, hit.transform.TransformPoint(vert));
-                        }
-                    }
-                }
-                if(nearestVert != Vector3.zero)
-                {
-                    vertIndicator.position = hit.transform.TransformPoint(nearestVert);
-                    offset = vertIndicator.position - hit.transform.position;
-                    //to - from
-                }
-            }
-        }
-        else
-        {
-            if (snapButton.GetStateUp(InputMan.leftHand))
-            {
-                snappingObject = null;
-                vertSnapping = false;
-            }
-        }
         if (trackingObj)
         {
             if (placeButton.GetStateDown(InputMan.rightHand) && canPlace)
@@ -100,43 +63,39 @@ public class Placer : MonoBehaviour
                 Vector3 placePos = hand.transform.forward * 5;
                 if (Physics.Raycast(ray, out hit, 1000, placementMask))
                 {
-                    if (CheckPosition(hit.transform.gameObject))
+                    Vector3 hitPoint = hit.point;
+                    if (vertSnapping)
                     {
-                        Vector3 hitPoint = hit.point;
-                        if (vertSnapping)
-                        {
 
-                            Vector3 nearestVert = Vector3.zero;
-                            float nearestVertDistance = Mathf.Infinity;
-                            foreach (Transform child in hit.transform)
+                        Vector3 nearestVert = Vector3.zero;
+                        float nearestVertDistance = Mathf.Infinity;
+                        foreach (Transform child in hit.transform)
+                        {
+                            foreach (Vector3 vert in child.GetComponent<MeshFilter>().mesh.vertices)
                             {
-                                foreach (Vector3 vert in child.GetComponent<MeshFilter>().mesh.vertices)
+                                if (Vector3.Distance(hit.point, hit.transform.TransformPoint(vert)) < nearestVertDistance)
                                 {
-                                    if (Vector3.Distance(hit.point, hit.transform.TransformPoint(vert)) < nearestVertDistance)
-                                    {
-                                        nearestVert = vert;
-                                        nearestVertDistance = Vector3.Distance(hit.point, hit.transform.TransformPoint(vert));
-                                    }
+                                    nearestVert = vert;
+                                    nearestVertDistance = Vector3.Distance(hit.point, hit.transform.TransformPoint(vert));
                                 }
                             }
-                            if(nearestVert != Vector3.zero)
-                            {
-                                hitPoint = hit.transform.TransformPoint(nearestVert);
-                            }
-                            hitPoint -= offset;
-                            vertIndicator.position = hitPoint;
                         }
-                        else
+                        if (nearestVert != Vector3.zero)
                         {
-                            if (snappingPosition)
-                            {
-                                hitPoint.x = Mathf.RoundToInt(hitPoint.x / gritTileSize) * gritTileSize;
-                                hitPoint.z = Mathf.RoundToInt(hitPoint.z / gritTileSize) * gritTileSize;
-                            }
+                            hitPoint = hit.transform.TransformPoint(nearestVert);
                         }
-                        placePos = hitPoint;
-                        trackingObj.transform.position = placePos;
+                        hitPoint -= offset;
                     }
+                    else
+                    {
+                        if (snappingPosition)
+                        {
+                            hitPoint.x = Mathf.RoundToInt(hitPoint.x / gritTileSize) * gritTileSize;
+                            hitPoint.z = Mathf.RoundToInt(hitPoint.z / gritTileSize) * gritTileSize;
+                        }
+                    }
+                    placePos = hitPoint;
+                    trackingObj.transform.position = placePos;
                 }
                 float rotateAmount = rotateButton.GetAxis(InputMan.rightHand).x;
                 if (snappingRotation)
@@ -161,15 +120,10 @@ public class Placer : MonoBehaviour
     }
     public void SetTrackingObject(GameObject thisObject)
     {
-        if(trackingObj == null)
+        if(trackingObj == null && canSetObject)
         {
-            if(snappingObject != null)
-            {
-                if(snappingObject == thisObject)
-                {
-                    vertSnapping = true;
-                }
-            }
+            canSetObject = false;
+            Player.canInteract = false;
             trackingObj = thisObject;
             trackingObj.GetComponent<Collider>().enabled = false;
             List<PlacementPart> allObjectMaterials = new List<PlacementPart>();
@@ -184,6 +138,7 @@ public class Placer : MonoBehaviour
     }
     public IEnumerator PlaceTrackingObject()
     {
+        Player.canInteract = true;
         print("PLACED");
         offset = Vector3.zero;
         GameObject oldTracker = trackingObj;
@@ -192,7 +147,8 @@ public class Placer : MonoBehaviour
             partData.ResetMaterial();
         }
         trackingObj = null;
-        yield return new WaitForSeconds(0.1f);
+        yield return null;
+        canSetObject = true;
         oldTracker.GetComponent<Collider>().enabled = true;
     }
     void ToggleGridSnap()
@@ -313,13 +269,32 @@ public class Placer : MonoBehaviour
     }
     public void CheckPlacable()
     {
+        canPlace = false;
         Collider[] collisions = Physics.OverlapBox(trackingObj.transform.position + trackingObj.GetComponent<BoxCollider>().center, trackingObj.GetComponent<BoxCollider>().size / 2, trackingObj.transform.rotation);
         foreach(Collider col in collisions)
         {
             if(col.gameObject != trackingObj)
             {
-                canPlace = false;
+                print("COLLIDED");
                 placementMaterial.SetColor("_BaseColor", cannotPlaceColor);
+                return;
+            }
+        }
+        RaycastHit hitObject;
+        if(Physics.Raycast(trackingObj.transform.position, -trackingObj.transform.up, out hitObject, 1000))
+        {
+            bool found = false; ;
+            foreach (ObjectTypes type in trackingObj.GetComponent<PlacedObject>().requiredObjectType)
+            {
+                if(type == hitObject.transform.GetComponent<PlacedObject>().objectType)
+                {
+                    found = true;
+                }
+            }
+            if (!found)
+            {
+                placementMaterial.SetColor("_BaseColor", cannotPlaceColor);
+                print("NOT FOUND");
                 return;
             }
         }

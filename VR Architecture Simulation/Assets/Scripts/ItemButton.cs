@@ -13,7 +13,10 @@ public class ItemButton : MonoBehaviour
     }
     public void Select()
     {
-        Placer.placer.SetTrackingObject(Instantiate(itemData.itemObject));
-        UIManager.uiManager.ToggleMenu(UIManager.uiManager.shop);
+        if (Placer.placer.canSetObject)
+        {
+            Placer.placer.SetTrackingObject(Instantiate(itemData.itemObject));
+            UIManager.uiManager.ToggleMenu(UIManager.uiManager.shop);
+        }
     }
 }
